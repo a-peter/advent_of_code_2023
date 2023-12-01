@@ -15,10 +15,7 @@ def match_to_sum(first, second):
 sum = 0
 for line in open('input-advent-01.1.txt'):
     it = regex.finditer(line)
-    first = next(it)
-    last = first
-    for m in it: last = m
-    sum += match_to_sum(first, last)
+    matches = list(it)
+    sum += match_to_sum(matches[0], matches[-1])
 
 print('The sum is %d' % sum)
-
