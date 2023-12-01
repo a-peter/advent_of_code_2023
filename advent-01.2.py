@@ -1,7 +1,7 @@
 import re
 
 numbers = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine']
-regex = re.compile('(\d|' + '|'.join(numbers) + ')')
+regex = re.compile('(?=(\d|' + '|'.join(numbers) + '))')
 
 def string_to_num(str):
     if str in numbers:
@@ -10,21 +10,15 @@ def string_to_num(str):
         return int(str)
 
 def match_to_sum(first, second):
-    return string_to_num(first) * 10 + string_to_num(second)
-
+    return string_to_num(first.group(1)) * 10 + string_to_num(second.group(1))
 
 sum = 0
 for line in open('input-advent-01.1.txt'):
-    first = regex.search(line)
-    f = first
-    # The strings might overlap like: eightwo. This has to evaluated
-    # as 'eight' *and* 'two'
-    while f:
-        last = f
-        line = line[last.start()+1:]
-        f = regex.search(line)
-        
-    sum += match_to_sum(first.group(), last.group())
+    it = regex.finditer(line)
+    first = next(it)
+    last = first
+    for m in it: last = m
+    sum += match_to_sum(first, last)
 
 print('The sum is %d' % sum)
 
