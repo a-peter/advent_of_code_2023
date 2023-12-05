@@ -1,72 +1,37 @@
 import sys
 
-seeds = [] # list of numbers with seeds
-seeds_ranges = []
+seeds = [] # list of numbers with seeds, part one
+seeds_ranges = [] # list of seeds ranges, part two
 ranges = [] # list of dictionaries
 
 def add_line_to_map(line):
     values = [int(value) for value in line.split()]
-    # print(values)
     return (values[1], values[0], values[2], values[1] + values[2] - 1, values[0] + values[2] - 1)
 
 def add_mapping(mapping):
+    mapping.sort(key=lambda x: x[0])
     if mapping[0][0] != 0:
         mapping = [(0, 0, mapping[0][0], mapping[0][0] - 1, mapping[0][0] - 1)] + mapping
     mapping.append((mapping[-1][0] + mapping[-1][2], mapping[-1][0] + mapping[-1][2], 10000000000000000000, mapping[-1][0] + 10000000000000000000, mapping[-1][0] + 10000000000000000000 ))
     ranges.append(mapping)
 
-def read_input():
+def read_input(file_name):
     global seeds
-    state = -1
     mapping_list = []
-    for line in open('Day_05/input-advent-05.1.txt'):
-    # for line in open('Day_05/sample-05.01.txt'):
+    for line in open(file_name):
         if line.startswith('seeds'):
             seeds = [int(seed) for seed in line.split()[1:]]
             for i in range(0, len(seeds), 2):
                 seeds_ranges.append((seeds[i], seeds[i+1]))
         elif line[0].isdigit():
             mapping_list.append(add_line_to_map(line))
-            mapping_list.sort(key=lambda x: x[0])
         elif line.startswith('\n'):
-            # assing map to maps
             pass
         elif line.startswith('seed-to-soil map:'):
-            state += 1
-            pass
-        elif line.startswith('soil'):
-            add_mapping(mapping_list)
-            mapping_list = []
-            state += 1
-            pass
-        elif line.startswith('fertilizer'):
-            add_mapping(mapping_list)
-            mapping_list = []
-            state += 1
-            pass
-        elif line.startswith('water'):
-            add_mapping(mapping_list)
-            mapping_list = []
-            state += 1
-            pass
-        elif line.startswith('light'):
-            add_mapping(mapping_list)
-            mapping_list = []
-            state += 1
-            pass
-        elif line.startswith('temp'):
-            add_mapping(mapping_list)
-            mapping_list = []
-            state += 1
-            pass
-        elif line.startswith('humid'):
-            add_mapping(mapping_list)
-            mapping_list = []
-            state += 1
             pass
         else:
-            mapping_list.append(add_line_to_map(line))
-            mapping_list.sort(key=lambda x: x[0])
+            add_mapping(mapping_list)
+            mapping_list = []
     add_mapping(mapping_list)
 
 def process_mappings():
@@ -119,12 +84,10 @@ def process_more_seeds():
     min_location = find_minimum(min_location, mappings)
     return min_location
 
-
 print('input:')
-read_input()
-print()
-# print('ranges')
-# [print(r) for r in ranges]
+read_input('Day_05/input-advent-05.1.txt')
+# read_input('Day_05/sample-05.01.txt')
+
 print()
 print('mappings')
 print('minimum location:', process_mappings())
