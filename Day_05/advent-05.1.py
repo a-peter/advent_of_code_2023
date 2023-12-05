@@ -1,3 +1,4 @@
+import sys
 
 seeds = [] # list of numbers with seeds
 seeds_ranges = []
@@ -24,8 +25,12 @@ def read_input():
             seeds = [int(seed) for seed in line.split()[1:]]
             for i in range(0, len(seeds), 2):
                 seeds_ranges.append((seeds[i], seeds[i+1]))
-
-            # print('seeds:', seeds)
+        elif line[0].isdigit():
+            mapping_list.append(add_line_to_map(line))
+            mapping_list.sort(key=lambda x: x[0])
+        elif line.startswith('\n'):
+            # assing map to maps
+            pass
         elif line.startswith('seed-to-soil map:'):
             state += 1
             pass
@@ -59,9 +64,6 @@ def read_input():
             mapping_list = []
             state += 1
             pass
-        elif line.startswith('\n'):
-            # assing map to maps
-            pass
         else:
             mapping_list.append(add_line_to_map(line))
             mapping_list.sort(key=lambda x: x[0])
@@ -69,7 +71,7 @@ def read_input():
 
 def process_mappings():
     mappings = []
-    min_location = 1000000000000000
+    min_location = sys.maxsize
     for seed in seeds:
         if len(mappings) > 0:
             min_location = min(min_location, mappings[-1])
@@ -85,21 +87,22 @@ def process_mappings():
     min_location = min(min_location, mappings[-1])
     return min_location
 
+def find_minimum(current_min, mappings):
+    x = current_min
+    if len(mappings) > 0:
+        x = min(current_min, min(mappings[7], key = lambda m: m[0])[0])
+    return x
+
 def process_more_seeds():
     mappings = {}
-    next_ranges = []
-    min_location = 100000000000000000
-    for s, seed_range in enumerate(seeds_ranges):
-        if len(mappings) > 0:
-            for m in mappings[7]:
-                min_location = min(min_location, m[0])
+    min_location = sys.maxsize
+    for seed_range in seeds_ranges:
+        min_location = find_minimum(min_location, mappings)
         mappings[0] = [(seed_range[0], seed_range[0] + seed_range[1] - 1)]
-        print('processing seed', s, ':', mappings[0])
-
         for index, r in enumerate(ranges):
             mappings[index + 1] = []
             for m in mappings[index]:
-                for index2, section in enumerate(r):
+                for section in r:
                     if m[0] <= section[3]: # start of seed-range in section?
                         if m[1] <= section[3]: # end of seed-range in section?
                             # fits into, add whole mapping rage
@@ -107,15 +110,13 @@ def process_more_seeds():
                             break
                         else:
                             # NOT OK!!!
-                            # fitting = m[4]
                             partial_mapping = (m[0] - section[0] + section[1], section[4])
                             mappings[index + 1].append(partial_mapping)
                             next_mapping = (section[3] + 1, m[1])
                             m = next_mapping
                             continue
 
-    for m in mappings[7]:
-        min_location = min(min_location, m[0])
+    min_location = find_minimum(min_location, mappings)
     return min_location
 
 
