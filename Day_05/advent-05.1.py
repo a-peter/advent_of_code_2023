@@ -9,7 +9,7 @@ SOURCE_END =   1
 DEST_START =   2
 DEST_END =     3
 
-def add_line_to_map(line):
+def build_mapping_line(line):
     values = [int(value) for value in line.split()]
     return (values[1], values[1] + values[2] - 1, values[0], values[0] + values[2] - 1)
 
@@ -29,7 +29,7 @@ def read_input(file_name):
             for i in range(0, len(seeds), 2):
                 seeds_ranges.append((seeds[i], seeds[i+1]))
         elif line[0].isdigit():
-            mapping_list.append(add_line_to_map(line))
+            mapping_list.append(build_mapping_line(line))
         elif line.startswith('\n'):
             pass
         elif line.startswith('seed-to-soil map:'):
@@ -40,20 +40,19 @@ def read_input(file_name):
     add_mapping(mapping_list)
 
 def perform_task_1():
-    mappings = []
+    mapped_value = sys.maxsize
     min_location = sys.maxsize
+
     for seed in seeds:
-        if len(mappings) > 0:
-            min_location = min(min_location, mappings[-1])
-        mappings = [seed]
-        m = seed
+        min_location = min(min_location, mapped_value)
+        mapped_value = seed
         for mapping in mapping_ranges:
             for mapping_range in mapping:
-                if m <= mapping_range[SOURCE_END]:
-                    mappings.append(mapping_range[DEST_START] + m - mapping_range[SOURCE_START])
-                    m = mappings[-1]
+                if mapped_value <= mapping_range[SOURCE_END]:
+                    mapped_value = mapping_range[DEST_START] + mapped_value - mapping_range[SOURCE_START]
                     break
-    min_location = min(min_location, mappings[-1])
+
+    min_location = min(min_location, mapped_value)
     return min_location
 
 def find_minimum(current_min, mappings):
@@ -76,12 +75,11 @@ def perform_task_2():
                 for section in mapping:
                     if stage_range[0] <= section[SOURCE_END]: # start of seed-range in section?
                         if stage_range[1] <= section[SOURCE_END]: # end of seed-range in section?
-                            # fits into, add whole mapping rage
+                            # fits into: add whole mapping rage
                             stage_ranges[index + 1].append((stage_range[0] - section[SOURCE_START] + section[DEST_START], stage_range[1] - section[SOURCE_START] + section[DEST_START]))
                             break
                         else:
-                            # stage range does not fit into current mapping line
-                            # split up ...
+                            # stage range does not fit into current mapping line: split up
                             partial_mapping = (stage_range[0] - section[SOURCE_START] + section[DEST_START], section[DEST_END])
                             stage_ranges[index + 1].append(partial_mapping)
                             # and continue with partial range and next section in mapping
@@ -91,12 +89,11 @@ def perform_task_2():
     min_location = find_minimum(min_location, stage_ranges)
     return min_location
 
-print('input:')
+print('Reading input')
 read_input('Day_05/input-advent-05.1.txt')
 # read_input('Day_05/sample-05.01.txt')
 
-print()
-print('mappings')
-print('minimum location  :', perform_task_1())
-print('minimum location 2:', perform_task_2())
+print('Mappings')
+print('Minimum location part 1:', perform_task_1())
+print('Minimum location part 2:', perform_task_2())
 
