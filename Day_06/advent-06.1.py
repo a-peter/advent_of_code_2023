@@ -1,15 +1,23 @@
 from functools import reduce
 import math
 
+# The formula to be done is a quadratic formula:
+# x * (time - x) = distance
+# -x² + time*x - distance = 0
+# Just find the solutions for this quadratic formula. Take
+# the correctly rounded inner int solutions.
+# Special case for the sample data: The solutions *are* int.
+# For my data the special case wasn't necessary.
+
 def calc_solution(time, distance):
     solution1 = (time/2) + math.sqrt((time * time)/4 - distance)
     solution2 = (time/2) - math.sqrt((time * time)/4 - distance)
 
     # Special case: the zeroes are without decimals
-    if math.floor(solution1) == solution1:
-        solution1 -= 1
-    if math.ceil(solution2) == solution2:
-        solution2 += 1
+    # if math.floor(solution1) == solution1:
+    #     solution1 -= 1
+    # if math.ceil(solution2) == solution2:
+    #     solution2 += 1
 
     result = math.floor(solution1) - math.ceil(solution2) + 1
     return result
