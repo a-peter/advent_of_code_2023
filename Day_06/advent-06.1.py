@@ -10,40 +10,33 @@ import math
 # For my data the special case wasn't necessary.
 
 def calc_solution(time, distance):
-    solution1 = (time/2) + math.sqrt((time * time)/4 - distance)
-    solution2 = (time/2) - math.sqrt((time * time)/4 - distance)
+    sqrt = math.sqrt((time * time)/4 - distance)
+    solution_lower = (time/2) - sqrt # lower limit
+    solution_upper = (time/2) + sqrt # upper limit
 
-    # Special case: the zeroes are without decimals
-    # if math.floor(solution1) == solution1:
-    #     solution1 -= 1
-    # if math.ceil(solution2) == solution2:
-    #     solution2 += 1
-
-    result = math.floor(solution1) - math.ceil(solution2) + 1
+    result = (math.ceil(solution_upper) - 1) - (math.floor(solution_lower) + 1) + 1
     return result
 
 #####################
 # Read input
 input = []
-input2 = []
 
 for line in open('./Day_06/input-advent-06.1.txt'):
 # for line in open('./Day_06/sample-06.1.txt'):
-    input.append([int(i) for i in line[line.index(':') + 1:].split()])
-    input2.append(int(line[line.index(':') + 1:-1].replace(' ', '')))
-
+    input.append([int(i) for i in line.split()[1:]])
+    
 #####################
-# Task 2
-
+# Task 1
 task_1 = 1
 for race in range(len(input[0])):
     task_1 *= calc_solution(input[0][race], input[1][race])
 
 print('Task 1: %d mm' % task_1)
 # should be 219849
+# 288 for sample
 
 #####################
 # Task 2
-
-print('Task 2: %d mm' % calc_solution(input2[0], input2[1]))
+time, dist = [int(''.join(l.split()[1:])) for l in open('./Day_06/input-advent-06.1.txt')]
+print('Task 2: %d mm' % calc_solution(time, dist))
 # should be 29432455
