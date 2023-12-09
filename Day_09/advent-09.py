@@ -7,6 +7,7 @@ for line in open(file_name):
   inputs.append([int(i) for i in line.split()])
 
 sum = 0
+sum2 = 0
 for measure in inputs:
   calculus = [measure]
   # print(calculus)
@@ -22,9 +23,13 @@ for measure in inputs:
     if all_zero:
       break
   new_value = 0
+  new_value_front = 0
   for i in range(len(calculus)):
     new_value += calculus[-(i+1)][-1]
+    new_value_front = calculus[-(i+1)][0] - new_value_front
   sum += new_value
+  sum2 += new_value_front
 
 # 18 28 68
 print('Task 1: %d' % sum)
+print('Task 2: %d' % sum2)
