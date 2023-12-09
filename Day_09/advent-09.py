@@ -1,35 +1,26 @@
 
-# file_name = './Day_09/sample-09.1.txt'
-file_name = './Day_09/input-advent-09.txt'
+file_name = './Day_09/sample-09.1.txt'
+# file_name = './Day_09/input-advent-09.txt'
 
-inputs = []
-for line in open(file_name):
-  inputs.append([int(i) for i in line.split()])
+inputs = [[int(i) for i in line.split()] for line in open(file_name).read().splitlines()]
 
-sum = 0
-sum2 = 0
+sum1, sum2 = 0, 0
 for measure in inputs:
-  calculus = [measure]
-  # print(calculus)
+  history = [measure]
   while True:
-    all_zero = True
-    line = calculus[-1]
-    new_line = []
-    for i in range(len(line) - 1):
-      diff = line[i+1] - line[i]
-      new_line.append(diff)
-      all_zero = all_zero and diff == 0
-    calculus.append(new_line)
-    if all_zero:
+    history.append([j - i for i,j in zip(history[-1], history[-1][1:])])
+    if all(e == 0 for e in history[-1]):
       break
-  new_value = 0
+
+  sum1 += sum([row[-1] for row in history]) # new_value
+
   new_value_front = 0
-  for i in range(len(calculus)):
-    new_value += calculus[-(i+1)][-1]
-    new_value_front = calculus[-(i+1)][0] - new_value_front
-  sum += new_value
+  for i in range(len(history)):
+    new_value_front = history[-(i+1)][0] - new_value_front
   sum2 += new_value_front
 
-# 18 28 68
-print('Task 1: %d' % sum)
+# sample data: 114 and 2
+# real data. 1842168671 and 903
+
+print('Task 1: %d' % sum1)  
 print('Task 2: %d' % sum2)
