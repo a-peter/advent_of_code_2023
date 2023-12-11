@@ -1,19 +1,9 @@
 
-# file_name, factor = "./Day_11/sample-11.1.txt", 99
-file_name, factor = "./Day_11/input-advent-11.txt", 999999
+file_name, factor = "./Day_11/sample-11.1.txt", 99
+# file_name, factor = "./Day_11/input-advent-11.txt", 999999
 
 # read input data
-universe = [[x for x in line] for line in open(file_name).read().splitlines()]
-
-# change to ints
-universe_number = 1
-for y,line in enumerate(universe):
-    for x,col in enumerate(line):
-        if col == '.':
-            universe[y][x] = 0
-        else:
-            universe[y][x] = universe_number
-            universe_number += 1
+universe = [[0 if x == '.' else 1 for x in line] for line in open(file_name).read().splitlines()]
 
 # expand by storing added rows and columns
 added_rows = [row_number for row_number,row in enumerate(universe) if sum(row) == 0]
