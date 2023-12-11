@@ -49,7 +49,7 @@ maze.insert(0, '.' * len(maze[0]))
 maze.append('.' * len(maze[0]))
 
 #######################
-# Task 1
+# Task 
 
 # Find the start point
 start = find_start(maze)
