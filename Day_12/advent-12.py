@@ -1,18 +1,15 @@
-
-cache = {}
+import functools
 
 # Tries to fit a group of engines into a line.
 # When the first engine did fit, the function is called recursive with
 # shortened line and engines.
-def solve_input(line: str, engines: list[int]) -> int:
+
+@functools.cache # as good as manual cache
+def solve_input(line: str, engines: tuple[int]) -> int:
     # exit if line too short for all engines.
     engines_size = sum(engines) + len(engines) - 1
     if (len(line) < engines_size): return 0
     
-    # return result on cache hit
-    if (line, tuple(engines)) in cache:
-        return cache[(line, tuple(engines))]
-
     # if there are NO left-over '#' everything is consumed ->fit, else does not fit
     if len(engines) == 0:
         return 1 if "#" not in line else 0
@@ -35,11 +32,9 @@ def solve_input(line: str, engines: list[int]) -> int:
         if line[i] == '#': # if there is a '#', we're done
             break
 
-    cache[(line, tuple(engines))] = total_positions
-
     return total_positions
 
-# file_name, s1, s2 = './Day_12/sample-12.1.txt', 21, 525152
+file_name, s1, s2 = './Day_12/sample-12.1.txt', 21, 525152
 file_name, s1, s2 = './Day_12/input-advent-12.txt', 7916, 37366887898686
 
 # Read input
@@ -53,8 +48,8 @@ total_1 = 0
 total_2, times = 0, 5
 
 for input in inputs:
-    total_1 += solve_input(input[0], input[1])
-    total_2 += solve_input('?'.join([input[0]] * times), input[1] * times)
+    total_1 += solve_input(input[0], tuple(input[1]))
+    total_2 += solve_input('?'.join([input[0]] * times), tuple(input[1] * times))
 
 print('Task 1: %d' % total_1) # 21     or 7916
 print('Task 2: %d' % total_2) # 525152 or 37366887898686
