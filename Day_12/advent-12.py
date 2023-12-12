@@ -26,7 +26,7 @@ def solve_input(line: str, engines: tuple[int]) -> int:
                 or line[i + block_size] != "#"  # or end sign is '?' or '.', else the block has to start at next pos
                 )
         ):
-            # block did fit. skip line for block length and next empty
+            # block did fit. skip positions for block length
             total_positions += solve_input(line[i + block_size + 1 :], engines[1:])
 
         if line[i] == '#': # if there is a '#', we're done
