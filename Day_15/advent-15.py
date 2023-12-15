@@ -15,8 +15,8 @@ def calc_hash(byte_input: bytes) -> int:
 
 ###########################
 # Task 1
-sum = sum([calc_hash(sequence.encode('utf-8')) for sequence in INPUT.split(',')])
-print('Task 1: %d' % sum) # 1320 for sample / 512797 for input
+focusing_power = sum([calc_hash(sequence.encode('utf-8')) for sequence in INPUT.split(',')])
+print('Task 1: %d' % focusing_power) # 1320 for sample / 512797 for input
 
 ###########################
 # Task 2
@@ -28,12 +28,11 @@ for sequence in INPUT.split(','):
     if focal_length: 
         boxes[box_number][label] = int(focal_length)
     else:
-        if label in boxes[box_number]:
-            del boxes[box_number][label]
+        boxes[box_number].pop(label, -1)
 
-sum = 0
-for slot,lenses in boxes.items():
+focusing_power = 0
+for slot, lenses in boxes.items():
     for index, focal_length in enumerate(lenses.values(), 1):
-        sum += (slot + 1) * index * focal_length
+        focusing_power += (slot + 1) * index * focal_length
 
-print('Task 2: %d' % sum) # - for HASH / 145 for sample / 262454 for input
+print('Task 2: %d' % focusing_power) # - for HASH / 145 for sample / 262454 for input
