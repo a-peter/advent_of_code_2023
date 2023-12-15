@@ -3,12 +3,11 @@
 file_name = './Day_13/sample-13.1.txt'
 file_name = './Day_13/input-advent-13.txt'
 
-r = []
 def check_symmetry(grid: list[str], allowed_smudges: int = 0) -> int:
-    global r
     no_of_rows = len(grid)
     no_of_cols = len(grid[0])
     for col in range(no_of_cols - 1):
+        r = []
         error_count = 0
         for split_col in range(no_of_cols):
             left = col - split_col
@@ -19,7 +18,7 @@ def check_symmetry(grid: list[str], allowed_smudges: int = 0) -> int:
                     if grid[row][left] != grid[row][right]:
                         error_count += 1
         if error_count == allowed_smudges:
-            print(r)
+            # print(r)
             return col + 1
         r = []
     return 0
@@ -38,6 +37,8 @@ with open(file_name, "r") as input:
         p1_total += x1
         p1_total += 100 * x2
         print(i, x1, x2)
+        if x1 > 0 and x2 > 0:
+            pass
 
     # for grid in grids:
     #     p1_total += check_symmetry(grid)
@@ -46,7 +47,7 @@ with open(file_name, "r") as input:
     #     p1_total += 100 * check_symmetry(t_grid)
     #     # p2_total += 100 * check_symmetry(t_grid, 1)
 
-    
+
     print(f"Part One : {p1_total}")
     print(f"Part Two : {p2_total}")
 
