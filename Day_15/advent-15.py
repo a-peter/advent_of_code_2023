@@ -1,21 +1,17 @@
 from collections import defaultdict
-import functools
+from functools import cache, reduce
 import re
 
-# Optimized, thanks to https://github.com/SteffenHaeussler/advent_of_code/blob/main/day_15/day_15.ipynb
+# INPUT = 'rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7'
+INPUT = open('./Day_15/input-advent-15.txt').read().strip()
 
-file_name = './Day_15/input-advent-15.txt'
-
-INPUT = 'rn=1,cm-,qp=3,cm=2,qp-,pc=4,ot=9,ab=5,pc-,pc=6,ot=7'
-INPUT = open(file_name).read().strip()
-
-@functools.cache
-def calc_hash(byte_input: bytes) -> int:
-    return functools.reduce(lambda hash, data: ((hash + data) * 17) % 256, byte_input, 0)
+@cache
+def calc_hash(byte_input: str) -> int:
+    return reduce(lambda hash, data: ((hash + ord(data)) * 17) % 256, byte_input, 0)
 
 ###########################
 # Task 1
-focusing_power = sum([calc_hash(sequence.encode('utf-8')) for sequence in INPUT.split(',')])
+focusing_power = sum([calc_hash(sequence) for sequence in INPUT.split(',')])
 print('Task 1: %d' % focusing_power) # 1320 for sample / 512797 for input
 
 ###########################
@@ -23,12 +19,10 @@ print('Task 1: %d' % focusing_power) # 1320 for sample / 512797 for input
 boxes = defaultdict(dict)
 for sequence in INPUT.split(','):
     label, focal_length = re.split(r'[-=]', sequence)
-    box_number = calc_hash(label.encode('utf-8'))
-
     if focal_length: 
-        boxes[box_number][label] = int(focal_length)
+        boxes[calc_hash(label)][label] = int(focal_length)
     else:
-        boxes[box_number].pop(label, -1)
+        boxes[calc_hash(label)].pop(label, -1)
 
 focusing_power = 0
 for slot, lenses in boxes.items():
