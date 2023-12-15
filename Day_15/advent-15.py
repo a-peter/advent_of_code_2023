@@ -24,9 +24,13 @@ for sequence in INPUT.split(','):
     else:
         boxes[calc_hash(label)].pop(label, -1)
 
-focusing_power = 0
-for slot, lenses in boxes.items():
-    for index, focal_length in enumerate(lenses.values(), 1):
-        focusing_power += (slot + 1) * index * focal_length
+# working:
+focusing_power = sum([ sum([(slot+1)*i*lens for i,lens in enumerate(lenses.values(), 1)]) for slot, lenses in boxes.items() if len(lenses) > 0])
+
+# focusing_power = 0
+# for slot, lenses in boxes.items():
+#     for index, focal_length in enumerate(lenses.values(), 1):
+#         focusing_power += (slot + 1) * index * focal_length
+
 
 print('Task 2: %d' % focusing_power) # - for HASH / 145 for sample / 262454 for input
