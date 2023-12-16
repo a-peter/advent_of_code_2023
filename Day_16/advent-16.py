@@ -4,7 +4,7 @@ LOCATION, DIRECTION = range(2)
 COLUMN, ROW = range(2)
 map_direction = {'/': [RIGHT, UP, LEFT, DOWN], '\\': [LEFT, DOWN, RIGHT, UP]}
 
-def pass_field(beam: list[list[int], int]):
+def move_beam(beam: list[list[int], int]):
   match beam[DIRECTION]:
     case 0: beam[LOCATION][ROW] -= 1
     case 1: beam[LOCATION][COLUMN] += 1
@@ -15,7 +15,7 @@ def location_inside(position: list[int], width: int, height: int) -> bool:
   return position[ROW] >= 0 and position[ROW] < height and position[COLUMN] >= 0 and position[COLUMN] < width
 
 file_name = './Day_16/sample-16.1.txt'
-# file_name = './Day_16/input-advent-16.txt'
+file_name = './Day_16/input-advent-16.txt'
 
 contraption = [line for line in open(file_name).read().splitlines()]
 width = len(contraption[0])
@@ -25,26 +25,22 @@ def turn_beam(beam: list[list[int], int], current_field: int, split_beam: bool) 
   new_beam = None
   _, direction = beam
   if current_field == '.' or (current_field == '|' and direction in [UP, DOWN]) or (current_field == '-' and direction in [LEFT, RIGHT]):
-    pass_field(beam)
+    move_beam(beam)
   elif current_field == '|' and (direction == RIGHT or direction == LEFT):
     beam[DIRECTION] = UP
     if split_beam:
       new_beam = [[i for i in beam[LOCATION]], DOWN]
-      pass_field(new_beam)
-    pass_field(beam)
-    # beams.append(new_beam)
+      move_beam(new_beam)
+    move_beam(beam)
   elif current_field == '-' and (direction == UP or direction == DOWN):
     beam[DIRECTION] = LEFT
     if split_beam:
       new_beam = [[i for i in beam[LOCATION]], RIGHT]
-      pass_field(new_beam)
-    pass_field(beam)
-    # beams.append(new_beam)
+      move_beam(new_beam)
+    move_beam(beam)
   elif current_field == '/' or current_field == '\\':
     beam[DIRECTION] = map_direction[current_field][beam[DIRECTION]]
-    pass_field(beam)
-  else:
-    pass # Why are we here???
+    move_beam(beam)
   return new_beam
 
 def perform_energy(start_beam: list[list[int], int]) -> int:
@@ -52,11 +48,7 @@ def perform_energy(start_beam: list[list[int], int]) -> int:
 
   beams = [start_beam]
   loop_counter = 0
-  # loop_index = 0
   while loop_counter <= 10:
-    # loop_index += 1
-    # if loop_index % 10 == 0:
-    #   print('loop %d, %d beams, %d energized' % (loop_index, len(beams), energizer_counter))
     energizer_counter = 0
     for beam in beams:
       location, _ = beam[LOCATION], beam[DIRECTION]
@@ -96,19 +88,17 @@ print('Task 1: %d energized' % energy1) # 46 / 7496
 # Taks 2
 max_energy = 0
 # UP/DOWN
-for col in range(width):
-  start_beam = [[col, 0], DOWN]
+for i in range(width):
+  start_beam = [[i, 0], DOWN]
   max_energy = max(max_energy, perform_energy(start_beam))
 
-  start_beam = [[col, height-1], UP]
+  start_beam = [[i, height-1], UP]
   max_energy = max(max_energy, perform_energy(start_beam))
 
-# LEFT/RIGHT
-for row in range(height):
-  start_beam = [[0, row], RIGHT]
+  start_beam = [[0, i], RIGHT]
   max_energy = max(max_energy, perform_energy(start_beam))
 
-  start_beam = [[width-1, row], UP] # [[x,y], direction]
+  start_beam = [[width-1, i], UP]
   max_energy = max(max_energy, perform_energy(start_beam))
 
-print('Task 2: %d' % max_energy) # 51 / 7932
+print('Task 2: %d max energy' % max_energy) # 51 / 7932
