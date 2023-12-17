@@ -1,24 +1,17 @@
-import functools
-import math
-
 import numpy as np
 from tqdm import trange
 import heapq
 
-# Annahme: Keine Kreuzung der Pfade!
-
 file_name = './Day_17/sample-17.1.txt'
 file_name = './Day_17/sample-17.2.txt'
 file_name = './Day_17/input-advent-17.txt'
-EAST,SOUTH,WEST,NORTH = range(4)
-MAX_STEPS_FORWARD = 3
 
 city = np.array([np.array([int(x) for x in line]) for line in open(file_name).read().splitlines()])
-city_w = len(city[0]) # city.shape[1] = number of columns / x 
-city_h = len(city) # city.shape[0] = number of rows / y
+city_w = city.shape[1] # number of columns / x 
+city_h = city.shape[0] # number of rows / y
 
 # Directions:
-Right, Down, Left, Up = (0, 1), (1, 0), (0, -1), (-1, 0)
+Right, Down, Left, Up = (1, 0), (0, 1), (-1, 0), (0, -1)
 Directions = [Right, Down, Left, Up]
 
 def find_path(ciyt: list[list[int]], min_step: int, max_step: int) -> int:
@@ -28,7 +21,7 @@ def find_path(ciyt: list[list[int]], min_step: int, max_step: int) -> int:
     cost, (x, y), direction, direction_count = heapq.heappop(possible_steps)
 
     # test if in limits, maybe earlier?
-    new_x, new_y = x + direction[1], y + direction[0]
+    new_x, new_y = x + direction[0], y + direction[1]
     if new_x < 0 or new_x >= city_w or new_y < 0 or new_y >= city_h:
       continue # out of city, skip 
 
@@ -49,6 +42,7 @@ def find_path(ciyt: list[list[int]], min_step: int, max_step: int) -> int:
       if d[0] + direction[0] == 0 and d[1] + direction[1] == 0:
         continue
       new_d_count = direction_count + 1 if d == direction else 1
+      # Go at least min steps in one direction, not more than max_steps
       if (d != direction and direction_count < min_step) or new_d_count > max_step:
         continue
       heapq.heappush(possible_steps, (new_cost, (new_x, new_y), d, new_d_count))
