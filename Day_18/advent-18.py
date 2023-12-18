@@ -1,10 +1,12 @@
-import numpy as np
-import scipy.ndimage as ndi
+#!/usr/bin/python3
 
 #################################
 # Read input
 file_name = './Day_18/sample-18.1.txt'
 file_name = './Day_18/input-advent-18.txt'
+
+# dig_plan_1 = [['RDLU'.index(d), int(c)] for d,c,_ in (line.split() for line in open(file_name).read().splitlines())]
+# dig_plan_2 = [[int(col[-2]), int(col[2:-2], 16)] for _,_,col in (line.split() for line in open(file_name).read().splitlines())]
 
 dig_plan_1 = []
 dig_plan_2 = []
