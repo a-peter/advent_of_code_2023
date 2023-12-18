@@ -1,6 +1,8 @@
 import numpy as np
 import scipy.ndimage as ndi
 
+#################################
+# Read input
 file_name = './Day_18/sample-18.1.txt'
 file_name = './Day_18/input-advent-18.txt'
 
@@ -9,53 +11,40 @@ dir_to_int = 'RDLU'
 dig_plan_1 = []
 dig_plan_2 = []
 for line in open(file_name).read().splitlines():
-    direction, count, color = line.split()
+    direction, count, col = line.split()
     dig_plan_1.append([dir_to_int.index(direction), int(count)])
-    dig_plan_2.append([int(color[-2]), int(color[2:8], 16)])
+    dig_plan_2.append([int(col[-2]), int(col[2:-2], 16)])
 
-# [print(line) for line in dig_plan]
-# print()
+# Expected solutions
+# Sample:    62 /    952408144115
+# Data:   46394 / 201398068194715
 
-width, height = 1, 1
-min_w, min_h = 1_000_000, 1_000_000
-max_w, max_h = 0, 0
-for direction, count in dig_plan_1:
-    if direction == 0: width += count
-    elif direction == 2: width -= count
-    elif direction == 1: height += count
-    elif direction == 3: height -= count
-    max_w, max_h = max(max_w, width), max(max_h, height)
-    min_w, min_h = min(min_w, width), min(min_h, height)
+# Pick's theorem: https://en.wikipedia.org/wiki/Pick%27s_theorem
+# inner = Area - (boundary/2) + 1
+# Shoelace forumla: https://en.wikipedia.org/wiki/Shoelace_formula
+# Area = [shoelace]
 
-print('max WxH: %dx%d' % (max_w, max_h))
-print('min WxH: %dx%d' % (min_w, min_h))
-print()
+def make_points(position: tuple[int, int], direction: int, count: int) -> tuple[int, int]:
+    if direction == 0: next_position = (position[0] + count, position[1])
+    elif direction == 2: next_position = (position[0] - count, position[1])
+    elif direction == 1: next_position = (position[0], position[1] + count)
+    elif direction == 3: next_position = (position[0], position[1] - count)
+    return next_position
 
-position = (-min_w + 1, -min_h + 1)
-max_w = max_w - min_w + 1
-max_h = max_h - min_h + 1
+def shoelace(points):
+    x = [p[0] for p in points]
+    y = [p[1] for p in points]
+    return 0.5 * abs(sum(x[i]*y[i+1] - x[i+1]*y[i] for i in range(len(points)-1)))
 
-print('max WxH: %dx%d' % (max_w, max_h))
-print('Start: %d,%d' % (position[0], position[1]))
+def solve(data: list[tuple[int, int]]) -> int:
+    points = [(0, 0)]
+    for direction, count in data:
+        points.append(make_points(points[-1], direction, count))
+    area = shoelace(points)
+    boundary_points = sum(line[1] for line in data)
+    inner_points = int(area) - boundary_points // 2 + 1
+    solution = inner_points + boundary_points
+    return solution
 
-loop = np.array([np.array([0 for x in range(max_w)]) for y in range(max_h)])
-loop[position[1], position[0]] = 1
-
-directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]
-
-for dir, count in dig_plan_1:
-    for i in range(count):
-        position = (position[0] + directions[dir][0], position[1] + directions[dir][1])
-        loop[position[1], position[0]] = 1
-
-# [print(''.join(['#' if x else '.' for x in line])) for line in loop]
-# print()
-
-filled_loop = ndi.binary_fill_holes(loop)
-print('Filled loop')
-
-# [print(''.join(['#' if x else '.' for x in line])) for line in filled_loop]
-# print()
-
-volume = sum(sum([line for line in filled_loop]))
-print('Task 1: %d m²' % volume) # ? / 46394
+print('Task 1: %d' % solve(dig_plan_1))
+print('Task 2: %d' % solve(dig_plan_2))
