@@ -16,10 +16,8 @@ rule_reg = re.compile('(\w+)(<|>)(\d+):(\w+)')
 workflow = {}
 for line in workflow_text.splitlines():
     match = wf_reg.match(line)
-    # print(match.group(0), match.group(1), match.group(2).split(','))
     rules = [(cat,op,int(val),dest) for cat,op,val,dest  in [rule_reg.match(rule).groups() for rule in match.group(2).split(',') if ':' in rule]]
     workflow[match.group(1)] = (rules, match.group(2).split(',')[-1])
-
 
 def process(part: dict[str: tuple[list[tuple[str,str,int,str]], str]], wf) -> bool:
     for cat,op,val,target in wf[0]:
@@ -49,8 +47,6 @@ def check_ranges(ranges: dict[str, list[int]], wf):
         else:
             ranges_copy[cat][0] = val + 1
             leftover[cat][1] = val
-        if ranges_copy[cat][0] > ranges_copy[cat][1]:
-            continue
         if target == 'A':
             product = functools.reduce(lambda x,y: x*y, [x[1]-x[0]+1 for x in ranges_copy.values()], 1)
             sum_of_pathes += product
@@ -66,7 +62,7 @@ def check_ranges(ranges: dict[str, list[int]], wf):
     else:
         check_ranges(leftover, workflow[wf[1]])
 
-ranges = {'x': [1, 4000], 'm': [1, 4000], 'a': [1, 4000], 's': [1, 4000]}
+r = {x:y for x,y in zip(list('xmas'),[[1,4000]]*4)}
 
-check_ranges(ranges, workflow['in'])
+check_ranges(r, workflow['in'])
 print('Task 2: %d' % sum_of_pathes) # 167409079868000 / 127447746739409
