@@ -1,27 +1,33 @@
 import re
 import functools
 
-ops = {'<': lambda x,y: x < y, '>': lambda x,y: x > y}
-
 file_name = './Day_19/sample-19.1.txt'
 file_name = './Day_19/input-advent-19.txt'
 workflow_text, parts_text = open(file_name).read().split('\n\n')
 
+# extract parts from input
 parts = []
 for line in parts_text.splitlines():
     parts.append({c:int(d) for (c,d) in [[cat for cat in part.split('=')] for part in line[1:-1].split(',')]})
 
-wf_reg = re.compile('(\w+)\{(.*)\}')
-rule_reg = re.compile('(\w+)(<|>)(\d+):(\w+)')
-workflow = {}
+# extract workflows from input
+reg1 = r'(\w+){(.*),(\w+)}'
+reg2 = r'(\w)(<|>)(\d+):(\w+)'
+workflow = dict()
 for line in workflow_text.splitlines():
-    match = wf_reg.match(line)
-    rules = [(cat,op,int(val),dest) for cat,op,val,dest  in [rule_reg.match(rule).groups() for rule in match.group(2).split(',') if ':' in rule]]
-    workflow[match.group(1)] = (rules, match.group(2).split(',')[-1])
+    name, _, end = re.findall(reg1, line)[0]
+    rules =[(cat,op,int(val),dest) for cat,op,val,dest in re.findall(reg2, line)]
+    workflow[name] = (rules, end)
 
-def process(part: dict[str: tuple[list[tuple[str,str,int,str]], str]], wf) -> bool:
+##############################
+# Task 1
+
+operators = {'<': lambda x,y: x < y, '>': lambda x,y: x > y}
+
+# execute a workflow rule for a part
+def process(part: dict[str: int], wf: tuple[list[tuple[str,str,int,str]], str]) -> bool:
     for cat,op,val,target in wf[0]:
-        if ops[op](part[cat], val):
+        if operators[op](part[cat], val):
             if target == 'A': return True
             elif target == 'R': return False
             else: return process(part, workflow[target])
