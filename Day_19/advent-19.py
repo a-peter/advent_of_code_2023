@@ -62,7 +62,7 @@ def check_ranges(ranges: dict[str, list[int]], wf):
     else:
         check_ranges(leftover, workflow[wf[1]])
 
-r = {x:y for x,y in zip(list('xmas'),[[1,4000]]*4)}
+start_ranges = {cat:range for cat,range in zip(list('xmas'),[[1,4000]]*4)}
 
-check_ranges(r, workflow['in'])
+check_ranges(start_ranges, workflow['in'])
 print('Task 2: %d' % sum_of_pathes) # 167409079868000 / 127447746739409
