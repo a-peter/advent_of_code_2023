@@ -2,7 +2,7 @@ import re
 import functools
 
 file_name = './Day_19/sample-19.1.txt'
-# file_name = './Day_19/input-advent-19.txt'
+file_name = './Day_19/input-advent-19.txt'
 
 workflow_text, parts_text = open(file_name).read().split('\n\n')
 
@@ -54,8 +54,6 @@ def check_ranges(ranges: dict[str, list[int]], wf, path: str):
     leftover = {k:[x for x in v] for (k,v) in ranges.items()}
     for cat,op,val,target in wf[0]:
         ranges_copy = {k:[x for x in v] for (k,v) in leftover.items()}
-        if target == 'R':
-            continue
         if op == '<':
             ranges_copy[cat][1] = val - 1
             leftover[cat][0] = val
@@ -68,6 +66,8 @@ def check_ranges(ranges: dict[str, list[int]], wf, path: str):
             product = functools.reduce(lambda x,y: x*y, [x[1]-x[0]+1 for x in ranges_copy.values()], 1)
             sum_of_pathes += product
             print(path, product, ranges_copy)
+        elif target == 'R':
+            pass
         else:
             check_ranges(ranges_copy, workflow[target], path + ' -> ' + target)
     if wf[1] == 'A':
