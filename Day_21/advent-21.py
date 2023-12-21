@@ -1,7 +1,7 @@
 import functools
 import numpy as np
 
-file_name, step_count = './Day_21/sample-21.1.txt', 3
+file_name, step_count = './Day_21/sample-21.1.txt', 50
 # file_name, step_count = './Day_21/input-21.txt', 64
 
 # Read and prepare data
@@ -30,16 +30,17 @@ def try_move(move: tuple[int, int]) -> tuple[int, int]:
         return move
     return None
 
-def step(positions: list[tuple[int, int]]) -> list[tuple[int, int]]:
-    new_positions = []
-    for position in positions:
-        pass
-        for move in moves:
-            if new := try_move(add_tuples(move, position)):
-                if not new in new_positions:
-                    new_positions.append(new)
+def two_steps(positions: list[tuple[int, int]]) -> list[tuple[int, int]]:
+    for i in range(2):
+        new_positions = set()
+        for position in positions:
+            pass
+            for move in moves:
+                if new := try_move(add_tuples(move, position)):
+                    new_positions.add(new)
+        positions = list(new_positions)
                 
-    return new_positions
+    return positions
 
 # Algorithm
 moves = [(1, 0), (0, 1), (-1, 0), (0, -1)] # possible moves
@@ -47,13 +48,12 @@ positions = [start]
 
 # if number of steps uneven -> make one step.
 if step_count % 2 == 1:
-    positions = step(positions)
+    positions = two_steps(positions)
     step_count -= 1
 
 solutions = positions
 for i in range(step_count // 2):
-    positions = step(positions)
-    positions = step(positions)
+    positions = two_steps(positions)
     new_positions = []
     for position in positions:
         if not position in solutions:
