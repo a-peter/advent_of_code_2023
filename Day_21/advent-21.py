@@ -1,7 +1,7 @@
 import functools
 import numpy as np
 
-file_name, step_count = './Day_21/sample-21.1.txt', 50
+file_name, step_count = './Day_21/sample-21.1.txt', 3
 # file_name, step_count = './Day_21/input-21.txt', 64
 
 # Read and prepare data
@@ -30,10 +30,7 @@ def try_move(move: tuple[int, int]) -> tuple[int, int]:
         return move
     return None
 
-# Algorithm
-moves = [(1, 0), (0, 1), (-1, 0), (0, -1)] # possible moves
-positions = [start]
-for i in range(step_count):
+def step(positions: list[tuple[int, int]]) -> list[tuple[int, int]]:
     new_positions = []
     for position in positions:
         pass
@@ -41,11 +38,34 @@ for i in range(step_count):
             if new := try_move(add_tuples(move, position)):
                 if not new in new_positions:
                     new_positions.append(new)
+                
+    return new_positions
+
+# Algorithm
+moves = [(1, 0), (0, 1), (-1, 0), (0, -1)] # possible moves
+positions = [start]
+
+# if number of steps uneven -> make one step.
+if step_count % 2 == 1:
+    positions = step(positions)
+    step_count -= 1
+
+solutions = positions
+for i in range(step_count // 2):
+    positions = step(positions)
+    positions = step(positions)
+    new_positions = []
+    for position in positions:
+        if not position in solutions:
+            solutions.append(position)
+            new_positions.append(position)
     positions = new_positions
+
 
 # Output of result
 # for (x,y) in positions:
 #     map[y] = map[y][:x] + 'O' + map[y][x+1:]
 # [print(line) for line in map]
 
-print('Task 1: %d plots' % len(positions))
+# print('Task 1: %d plots' % len(positions))
+print('Task 1: %d plots' % len(solutions))
