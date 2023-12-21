@@ -76,25 +76,27 @@ def engine_state() -> str:
 signal_count = [0, 0]
 hashes = []
 print(engine_state())
-for i in range(1000): # Push the button!
+button_press = 0
+relevant = [name for name, module in modules.items() if module[0] == '&']
+product = 1
+while len(relevant) > 0:
+    button_press += 1
     signals = [('button', 0, 'broadcaster')]
     while len(signals) > 0:
         # take first element from 
         signal = signals.pop(0) # signals[0]
         # print([print(x, end=' ') for x in signal])
 
+        if signal[2] in relevant and signal[1] == 1:
+            product *= button_press
+            relevant.remove(signal[2])
+            print(signal[2], signal[1], button_press)
         signals.extend(process(signal))
         signal_count[signal[1]] += 1
-    # print(engine_state())
-    # print (signal_count[0], signal_count[1])
-    # hash = ' - '.join([f'{k}={v[1]}' for k,v in modules.items()])
-    # if hash in hashes:
-    #     print(hashes.index(hash))
-    # hashes.append(hash)
-    # print(hash)
 
-print('Low/Hi:', signal_count[0], signal_count[1])
-print('Task 1: %d' % (signal_count[0] * signal_count[1]))
+    if button_press == 1000:
+        print('Low/Hi:', signal_count[0], signal_count[1])
+        print('Task 1: %d' % (signal_count[0] * signal_count[1]))
 
-# sample 1: 32000000 / sample 2: 11687500 / input: 545916945 (WRONG!)
-#                                                  703315117
+print('Task 2: %d' % product)
+# sample 1: 32000000 / sample 2: 11687500 / input: 703315117
